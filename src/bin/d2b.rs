@@ -60,8 +60,21 @@ fn main() {
                             up_stack.push(*next_value);
                         } else if up_value < next_value && !is_out_of_range(*up_value, *next_value)
                         {
-                            up_stack.push(*up_value);
-                            up_stack.push(*next_value);
+                            let previous_item = up_stack.pop();
+
+                            if let Some(previous_value) = previous_item {
+                                if *up_value > previous_value {
+                                    up_stack.push(previous_value);
+                                    up_stack.push(*up_value);
+                                    up_stack.push(*next_value);
+                                } else {
+                                    up_stack.push(previous_value);
+                                    break;
+                                }
+                            } else {
+                                up_stack.push(*up_value);
+                                up_stack.push(*next_value);
+                            }
                         } else {
                             up_stack.push(top_value);
                             break;
@@ -70,8 +83,37 @@ fn main() {
                         up_stack.push(top_value);
                     }
                 } else {
-                    up_stack.push(top_value);
-                    if !is_out_of_range(top_value, *up_value) {
+                    if is_out_of_range(top_value, *up_value) {
+                        if up_tolerated {
+                            up_stack.push(top_value);
+                            break;
+                        }
+                        up_tolerated = true;
+                        if up_stack.len() == 0 {
+                            let next_item = up_iter.next();
+
+                            if let Some(next_value) = next_item {
+                                if !is_out_of_range(top_value, *next_value)
+                                    && top_value < *next_value
+                                {
+                                    up_stack.push(top_value);
+                                    up_stack.push(*next_value);
+                                } else if !is_out_of_range(*up_value, *next_value)
+                                    && up_value < next_value
+                                {
+                                    up_stack.push(*up_value);
+                                    up_stack.push(*next_value);
+                                } else {
+                                    up_stack.push(top_value);
+                                }
+                            } else {
+                                up_stack.push(top_value);
+                            }
+                        } else {
+                            up_stack.push(top_value);
+                        }
+                    } else {
+                        up_stack.push(top_value);
                         up_stack.push(*up_value);
                     }
                 }
@@ -103,8 +145,23 @@ fn main() {
                         } else if down_value > next_value
                             && !is_out_of_range(*down_value, *next_value)
                         {
-                            down_stack.push(*down_value);
-                            down_stack.push(*next_value);
+                            let previous_item = down_stack.pop();
+
+                            if let Some(previous_value) = previous_item {
+                                if *down_value < previous_value {
+                                    down_stack.push(previous_value);
+                                    down_stack.push(*down_value);
+                                    if *next_value < previous_value {
+                                        down_stack.push(*next_value);
+                                    }
+                                } else {
+                                    down_stack.push(previous_value);
+                                    break;
+                                }
+                            } else {
+                                down_stack.push(*down_value);
+                                down_stack.push(*next_value);
+                            }
                         } else {
                             down_stack.push(top_value);
                             break;
@@ -113,8 +170,37 @@ fn main() {
                         down_stack.push(top_value);
                     }
                 } else {
-                    down_stack.push(top_value);
-                    if !is_out_of_range(top_value, *down_value) {
+                    if is_out_of_range(top_value, *down_value) {
+                        if down_tolerated {
+                            down_stack.push(top_value);
+                            break;
+                        }
+                        down_tolerated = true;
+                        if down_stack.len() == 0 {
+                            let next_item = down_iter.next();
+
+                            if let Some(next_value) = next_item {
+                                if !is_out_of_range(top_value, *next_value)
+                                    && top_value > *next_value
+                                {
+                                    down_stack.push(top_value);
+                                    down_stack.push(*next_value);
+                                } else if !is_out_of_range(*down_value, *next_value)
+                                    && down_value > next_value
+                                {
+                                    down_stack.push(*down_value);
+                                    down_stack.push(*next_value);
+                                } else {
+                                    down_stack.push(top_value);
+                                }
+                            } else {
+                                down_stack.push(top_value);
+                            }
+                        } else {
+                            down_stack.push(top_value);
+                        }
+                    } else {
+                        down_stack.push(top_value);
                         down_stack.push(*down_value);
                     }
                 }
@@ -127,8 +213,9 @@ fn main() {
 
         if report.len() - up_stack.len() <= 1 || report.len() - down_stack.len() <= 1 {
             number_of_safe_report += 1;
+            println!("{:?} -> {:?}/ {:?} O", report, up_stack, down_stack);
         } else {
-            println!("{:?}", report);
+            println!("{:?} -> {:?}/ {:?} X", report, up_stack, down_stack);
         }
     }
 
