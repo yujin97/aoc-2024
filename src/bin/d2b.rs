@@ -66,7 +66,9 @@ fn main() {
                                 if *up_value > previous_value {
                                     up_stack.push(previous_value);
                                     up_stack.push(*up_value);
-                                    up_stack.push(*next_value);
+                                    if *next_value > previous_value {
+                                        down_stack.push(*next_value);
+                                    }
                                 } else {
                                     up_stack.push(previous_value);
                                     break;
@@ -213,9 +215,6 @@ fn main() {
 
         if report.len() - up_stack.len() <= 1 || report.len() - down_stack.len() <= 1 {
             number_of_safe_report += 1;
-            println!("{:?} -> {:?}/ {:?} O", report, up_stack, down_stack);
-        } else {
-            println!("{:?} -> {:?}/ {:?} X", report, up_stack, down_stack);
         }
     }
 
