@@ -19,16 +19,18 @@ fn search_word(
 ) -> bool {
     use Direction::*;
 
-    if word.len() == 0 {
-        return true;
-    }
-
     let puzzle_width = puzzle[0].len();
     let puzzle_height = puzzle.len();
 
     let (x, y) = from;
     let target = word.chars().nth(0).unwrap();
     let current = puzzle[y][x];
+
+    let is_target = current == target;
+
+    if word.len() == 1 {
+        return is_target;
+    }
 
     let next_char = match direction {
         N => {
@@ -91,7 +93,7 @@ fn search_word(
 
     match next_char {
         Some((next_x, next_y)) => {
-            current == target && search_word(puzzle, (next_x, next_y), &word[1..], direction)
+            is_target && search_word(puzzle, (next_x, next_y), &word[1..], direction)
         }
         None => false,
     }
@@ -117,38 +119,28 @@ fn main() {
 
     for y in 0..puzzle_height {
         for x in 0..puzzle_width {
-            println!("({}, {})", x, y);
-
             if search_word(&puzzle, (x, y), "XMAS", N) {
-                println!("N");
                 ans += 1;
             }
             if search_word(&puzzle, (x, y), "XMAS", NE) {
-                println!("NE");
                 ans += 1;
             }
             if search_word(&puzzle, (x, y), "XMAS", E) {
-                println!("E");
                 ans += 1;
             }
             if search_word(&puzzle, (x, y), "XMAS", SE) {
-                println!("SE");
                 ans += 1;
             }
             if search_word(&puzzle, (x, y), "XMAS", S) {
-                println!("S");
                 ans += 1;
             }
             if search_word(&puzzle, (x, y), "XMAS", SW) {
-                println!("SW");
                 ans += 1;
             }
             if search_word(&puzzle, (x, y), "XMAS", W) {
-                println!("W");
                 ans += 1;
             }
             if search_word(&puzzle, (x, y), "XMAS", NW) {
-                println!("NW");
                 ans += 1;
             }
         }
