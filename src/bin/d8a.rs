@@ -1,7 +1,7 @@
 use std::collections::{HashMap, HashSet};
 use std::fs::read_to_string;
 
-fn get_anitonodes(
+fn get_antinodes(
     antenna_1: (usize, usize),
     antenna_2: (usize, usize),
     puzzle_width: usize,
@@ -75,7 +75,7 @@ fn main() {
         for i in 0..antenna_group.len() {
             let mut new_antinodes = Vec::new();
             for j in i + 1..antenna_group.len() {
-                let antinodes = get_anitonodes(
+                let antinodes = get_antinodes(
                     antenna_group[i],
                     antenna_group[j],
                     puzzle_width,
