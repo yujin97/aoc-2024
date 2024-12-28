@@ -45,83 +45,38 @@ fn get_antinodes_by_slope(
     let mut left_x = left_x as isize;
     let mut left_y = left_y as isize;
 
-    match slope_value {
-        Positive => {
-            loop {
-                if is_valid_position(right_x, right_y, puzzle_width, puzzle_height) {
-                    antinodes.push((right_x as usize, right_y as usize));
-                    right_x += x_distance;
-                    right_y += y_distance;
-                } else {
-                    break;
-                }
-            }
-            loop {
-                if is_valid_position(left_x, left_y, puzzle_width, puzzle_height) {
-                    antinodes.push((left_x as usize, left_y as usize));
-                    left_x -= x_distance;
-                    left_y -= y_distance;
-                } else {
-                    break;
-                }
-            }
-        }
-        Negative => {
-            loop {
-                if is_valid_position(right_x, right_y, puzzle_width, puzzle_height) {
-                    antinodes.push((right_x as usize, right_y as usize));
-                    right_x += x_distance;
-                    right_y -= y_distance;
-                } else {
-                    break;
-                }
-            }
-            loop {
-                if is_valid_position(left_x, left_y, puzzle_width, puzzle_height) {
-                    antinodes.push((left_x as usize, left_y as usize));
-                    left_x -= x_distance;
-                    left_y += y_distance;
-                } else {
-                    break;
-                }
-            }
-        }
-        Zero => {
-            loop {
-                if is_valid_position(right_x, right_y, puzzle_width, puzzle_height) {
-                    antinodes.push((right_x as usize, right_y as usize));
-                    right_x += x_distance;
-                } else {
-                    break;
-                }
-            }
-            loop {
-                if is_valid_position(left_x, left_y, puzzle_width, puzzle_height) {
-                    antinodes.push((left_x as usize, left_y as usize));
-                    left_x -= x_distance;
-                } else {
-                    break;
-                }
-            }
-        }
-        Infinite => {
-            loop {
-                if is_valid_position(right_x, right_y, puzzle_width, puzzle_height) {
-                    antinodes.push((right_x as usize, right_y as usize));
-                    right_y += y_distance;
-                } else {
-                    break;
-                }
-            }
-            loop {
-                if is_valid_position(left_x, left_y, puzzle_width, puzzle_height) {
-                    antinodes.push((left_x as usize, left_y as usize));
-                    left_y -= y_distance;
-                } else {
-                    break;
-                }
-            }
-        }
+    while is_valid_position(right_x, right_y, puzzle_width, puzzle_height) {
+        antinodes.push((right_x as usize, right_y as usize));
+
+        right_x = match slope_value {
+            Positive => right_x + x_distance,
+            Negative => right_x + x_distance,
+            Zero => right_x + x_distance,
+            Infinite => right_x,
+        };
+        right_y = match slope_value {
+            Positive => right_y + y_distance,
+            Negative => right_y - y_distance,
+            Zero => right_y,
+            Infinite => right_y + y_distance,
+        };
+    }
+
+    while is_valid_position(left_x, left_y, puzzle_width, puzzle_height) {
+        antinodes.push((left_x as usize, left_y as usize));
+
+        left_x = match slope_value {
+            Positive => left_x - x_distance,
+            Negative => left_x - x_distance,
+            Zero => left_x - x_distance,
+            Infinite => left_x,
+        };
+        left_y = match slope_value {
+            Positive => left_y - y_distance,
+            Negative => left_y + y_distance,
+            Zero => left_y,
+            Infinite => left_y - y_distance,
+        };
     }
 
     antinodes
